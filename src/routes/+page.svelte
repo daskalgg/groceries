@@ -28,6 +28,19 @@
             dones = dones.filter((todo) => todo.id != id);
             todos = [...todos, todo]
         }
+
+    }
+
+    async function storeTodo(message: string) {
+        const response = await fetch('/api/addTodo', {
+			method: 'POST',
+			body: JSON.stringify({ message }),
+			headers: {
+				'content-type': 'application/json'
+			}
+		});
+
+		console.log(await response.json());
     }
 </script>
 
@@ -39,6 +52,7 @@
     </div>
     {/each}
     <button on:click={() => addTodo()}>Add Todo</button>
+    <button on:click={() => storeTodo("Hello")}>Action</button>
     {#each dones as done}
     <div class="todo">
         <input class="checkbox" type="checkbox" checked={done.done} on:click|preventDefault={() => toggleTodo(done.id)}/>
