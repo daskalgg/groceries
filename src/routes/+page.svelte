@@ -1,93 +1,70 @@
 <script lang="ts">
     import Todo from "../lib/todo";
+    import IconShoppingCart from 'virtual:icons/mdi/shopping-cart-outline';
+    import IconAdd from 'virtual:icons/mdi/add';
+    let newTodoText = "";
     let todos = new Array<Todo>();
     let dones = new Array<Todo>();
 
-    function addTodo() {
-        todos = [...todos, new Todo()];
-        console.log(todos)
-    }
-
-    function getTodoFromId(id: number) {
-        for(let todo of todos) {
-            if(todo.id == id) return todo;
-        }
-        for(let todo of dones) {
-            if(todo.id == id) return todo;
-        }
-        return null;
-    }
-
-    function toggleTodo(id: number) {
-        let todo = getTodoFromId(id) as Todo;
-        todo.done = !todo.done
-        if(todo.done) {
-            todos = todos.filter((todo) => todo.id != id);
-            dones = [...dones, todo]
-        } else {
-            dones = dones.filter((todo) => todo.id != id);
-            todos = [...todos, todo]
-        }
-
-    }
-
-    async function storeTodo(message: string) {
+    async function addTodo() {
         const response = await fetch('/api/addTodo', {
 			method: 'POST',
-			body: JSON.stringify({ message }),
+			body: JSON.stringify({ text: newTodoText }),
 			headers: {
 				'content-type': 'application/json'
 			}
 		});
-
-		console.log(await response.json());
+		const res = await response.json();
+        todos = [...todos, new Todo(res.id, newTodoText)];
+        newTodoText = "";
     }
 </script>
 
 <main class="main">
+    <div class="header">
+        <div class="insert">
+        <input class="insertText" bind:value={newTodoText} on:keydown={(k) => {if(k.code == 'Enter') addTodo()}} />
+        <button on:click={() => addTodo()} class="button">
+            <IconAdd style="color:white;"></IconAdd>
+        </button>
+        </div>
+    </div>
     {#each todos as todo}
     <div class="todo">
-        <input class="checkbox" type="checkbox" checked={todo.done} on:click|preventDefault={() => toggleTodo(todo.id)}/>
-        <input class="input" bind:value={todo.text} />
-    </div>
-    {/each}
-    <button on:click={() => addTodo()}>Add Todo</button>
-    <button on:click={() => storeTodo("Hello")}>Action</button>
-    {#each dones as done}
-    <div class="todo">
-        <input class="checkbox" type="checkbox" checked={done.done} on:click|preventDefault={() => toggleTodo(done.id)}/>
-        <p class="input">{done.text}</p>
+       <p>{todo.text}</p> 
     </div>
     {/each}
 </main>
 
 <style>
     .main {
-    width: 80%;
     margin: auto;
         display: flex;
         flex-direction: column;
     }
 
-    .todo {
+    .header {
         display: flex;
-        flex-direction: row;
-        border: 2px black;
+        background-color: lightcoral;
+        padding: 20px;
+    }
+
+    .insert {
+        display: flex;
+        margin: auto;
+        width: 60%;
+    }
+
+    .insertText {
+        padding: 5px;
+        flex-grow: 1;
         border-radius: 4px;
-        background-color: gray;
-        padding: 10px;
-        margin: 4px;
     }
 
-    .input {
-        border: 0;
-        width: 100%;
-        background-color: gray;
-        border-radius: 3px;
-        padding: 10px;
-    }
-
-    .checkbox {
-        margin: 10px;
+    .button {
+        background-color: lightseagreen;
+        margin-left: 5px;
+        padding: 4px;
+        border-radius: 4px;
     }
 </style>

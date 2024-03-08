@@ -1,12 +1,10 @@
-let id = 0;
 export default class Todo {
     id: number;
     text: string;
     done: boolean;
-    constructor() {
+    constructor(id: number, text: string) {
         this.id = id;
-        this.text = "";
+        this.text = text
         this.done = false;
-        id++;
     }
 }

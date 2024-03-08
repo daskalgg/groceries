@@ -1,10 +1,16 @@
 import {json} from '@sveltejs/kit'
+import { createPool } from "@vercel/postgres";
+import { POSTGRES_URL } from '$env/static/private'
+const db = createPool({ connectionString: POSTGRES_URL })
 
-export function GET() {
+export async function GET() {
+
+    let res = await db.query('select * from Todo');
+    console.log(res);
+
     const responseBody = {
         status: 'success',
-        message: 'Hello, SvelteKit'
+        todos: res.rows
     };
-
     return json(responseBody);
 }
