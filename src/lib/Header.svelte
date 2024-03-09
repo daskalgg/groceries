@@ -57,16 +57,20 @@
      return null;
  }
 
+ function addNew() {
+     let id = alreadyDone();
+     if(id) {
+         toggleTodo(id);
+     } else {
+         createTodo()
+     }
+
+ }
+
  function keyDown(ev: KeyboardEvent)
  {
      if(ev.code == 'Enter') {
-         let id = alreadyDone();
-         if(id) {
-             toggleTodo(id);
-         } else {
-             createTodo()
-         }
-
+         addNew();
      }
  }
 </script>
@@ -83,7 +87,7 @@
                 <option value="{suggestion.name}">
             {/each}
         </datalist>
-        <button on:click={() => createTodo()} class="button">
+        <button on:click={() => addNew()} class="button">
             <IconAdd style="color:white;"></IconAdd>
         </button>
     </div>
