@@ -6,7 +6,6 @@ const db = createPool({ connectionString: POSTGRES_URL })
 export async function GET() {
 
     let res = await db.query('select * from Todo');
-    console.log(res);
 
     const responseBody = {
         status: 'success',
